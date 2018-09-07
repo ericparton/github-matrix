@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -83,7 +84,14 @@ public class GithubScheduler {
             LOG.info("done fetching {} commits. new cache size: {} [took {}s]", newSize - oldSize, cache.size(), took);
         }
         catch (Exception e) {
-            LOG.error("failed to fetch github data", e);
+            if (e instanceof HttpClientErrorException) {
+                HttpClientErrorException he = ((HttpClientErrorException) e);
+                LOG.error("failed to fetch github data. response code: {}. response body: {}.",
+                        he.getStatusCode(),
+                        he.getResponseBodyAsString());
+            } else {
+                LOG.error("failed to fetch github data", e);
+            }
         }
     }
 

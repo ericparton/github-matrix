@@ -9,8 +9,8 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -82,8 +82,11 @@ public class GithubCollector {
         for (JsonNode commitNode : commitNodes) {
             String url = commitNode.get("url").asText();
 
-            ResponseEntity<String> response = get(url);
-            if (response.getStatusCode() != HttpStatus.OK) {
+            ResponseEntity<String> response;
+
+            try {
+                response = get(url);
+            } catch (HttpClientErrorException ex) {
                 continue;
             }
 

@@ -45,7 +45,7 @@ public class GithubScheduler {
         Assert.notNull(apiToken, "apiToken must be present");
         collector = new GithubCollector(apiToken);
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleWithFixedDelay(this::collectLatest, 0, 10, TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(this::collectLatest, 0, 20, TimeUnit.SECONDS);
         LOG.info("scheduler started");
     }
 
